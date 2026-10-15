@@ -1,0 +1,94 @@
+services:
+
+  # ─── MySQL ─────────────────────────────────────────────────────────────────
+  mysql:
+    image: mysql:8.4
+    container_name: warehouse_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: warehouse_db
+      MYSQL_USER: ${MYSQL_USER:-warehouse_app}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-AppPass123!}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-rootpassword}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - warehouse_net
+
+  # ─── MongoDB ───────────────────────────────────────────────────────────────
+  mongo:
+    image: mongo:7.0
+    container_name: warehouse_mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: warehouse_mongo_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+      - ./database/seed_mongo.js:/docker-entrypoint-initdb.d/seed_mongo.js:ro
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks:
+      - warehouse_net
+
+  # ─── Spring Boot Backend ───────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./warehouse
+      dockerfile: Dockerfile
+    container_name: warehouse_backend
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+    environment:
+      PORT: 8080
+      MYSQL_URL: jdbc:mysql://mysql:3306/warehouse_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      MYSQL_USER: ${MYSQL_USER:-warehouse_app}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-AppPass123!}
+      MONGO_URI: mongodb://mongo:27017/warehouse_mongo_db
+      JWT_SECRET: ${JWT_SECRET:-CHANGEME_64char_base64_secret_replace_in_prod_00000000000000000000}
+      JWT_EXPIRATION_MS: 86400000
+      FRONTEND_URL: http://localhost:80
+    ports:
+      - "8080:8080"
+    networks:
+      - warehouse_net
+
+  # ─── React Frontend (Nginx) ────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./warehouse-ui
+      dockerfile: Dockerfile
+    container_name: warehouse_frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    networks:
+      - warehouse_net
+
+volumes:
+  mysql_data:
+  mongo_data:
+
+networks:
+  warehouse_net:
+    driver: bridge
