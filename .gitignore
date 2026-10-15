@@ -1,0 +1,20 @@
+# Environment variables & secrets
+.env
+*.env.local
+
+# Java / Maven build output
+**/target/
+**/.mvn/wrapper/maven-wrapper.jar
+*.class
+
+# Node / React build output
+**/node_modules/
+**/dist/
+*.local
+
+# IDE & OS
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db

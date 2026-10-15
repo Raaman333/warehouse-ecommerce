@@ -10,7 +10,7 @@ export default function CartDrawer({ isOpen, onClose, products }) {
   const cartItems = Object.entries(cart)
     .filter(([, qty]) => qty > 0)
     .map(([prodId, qty]) => {
-      const product = products.find(p => p.prodId === prodId)
+      const product = (Array.isArray(products) ? products : []).find(p => p.prodId === prodId)
       return { prodId, qty, product }
     })
 

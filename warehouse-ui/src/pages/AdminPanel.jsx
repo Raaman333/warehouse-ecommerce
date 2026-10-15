@@ -253,7 +253,7 @@ export default function AdminPanel() {
                   <td>{p.category}</td>
                   <td>${p.sellingPrice?.toFixed(2)}</td>
                   <td className={p.totalStock < 5 ? 'low-stock' : ''}>{p.totalStock}</td>
-                  <td>{[...p.warehouses].join(', ')}</td>
+                  <td>{[...(p.warehouses || [])].join(', ')}</td>
                 </tr>
               ))}
             </tbody>

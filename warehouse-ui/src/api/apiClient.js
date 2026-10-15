@@ -6,8 +6,14 @@ import axios from 'axios'
  * the Vite dev proxy forwards to localhost:8080, and Nginx
  * forwards in production).
  */
+let apiBase = (import.meta.env.VITE_API_BASE_URL || '/api').trim()
+if (apiBase.startsWith('http') && !apiBase.endsWith('/api') && !apiBase.endsWith('/api/')) {
+  apiBase = apiBase.replace(/\/+$/, '') + '/api'
+}
+apiBase = apiBase.replace(/\/+$/, '')
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
+  baseURL: apiBase,
   timeout: 10000,
   headers: { 'Content-Type': 'application/json' },
 })

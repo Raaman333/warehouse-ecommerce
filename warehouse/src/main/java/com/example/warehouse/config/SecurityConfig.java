@@ -50,9 +50,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtFilter jwtFilter, DaoAuthenticationProvider authenticationProvider) throws Exception {
         http
+            .cors(org.springframework.security.config.Customizer.withDefaults())
             .csrf(csrf -> csrf.disable())
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                // Allow preflight OPTIONS requests from any origin
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 // Public read-only catalog
                 .requestMatchers(HttpMethod.GET,  "/api/inventory/**").permitAll()
                 .requestMatchers(HttpMethod.GET,  "/api/warehouses").permitAll()

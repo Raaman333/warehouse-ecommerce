@@ -55,11 +55,11 @@ export default function ProductCard({ product }) {
 
       {/* Sold by */}
       <p className="product-supplier">
-        <strong>Sold by:</strong> {[...suppliers].join(', ') || 'WarehouseMart'}
+        <strong>Sold by:</strong> {[...(suppliers || [])].join(', ') || 'WarehouseMart'}
       </p>
 
       {/* Specs preview */}
-      {extraDetails?.specifications && Object.keys(extraDetails.specifications).length > 0 && (
+      {extraDetails?.specifications && typeof extraDetails.specifications === 'object' && Object.keys(extraDetails.specifications).length > 0 && (
         <details className="specs-details">
           <summary>Key Specifications</summary>
           <ul className="specs-list">
