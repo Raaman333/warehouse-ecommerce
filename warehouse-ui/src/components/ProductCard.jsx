@@ -1,5 +1,6 @@
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
+import { formatINR, getWarehouseLabel } from '../utils/formatters'
 
 export default function ProductCard({ product }) {
   const { user } = useAuth()
@@ -11,6 +12,7 @@ export default function ProductCard({ product }) {
     category,
     sellingPrice,
     totalStock,
+    warehouses = [],
     suppliers = [],
     extraDetails,
   } = product
@@ -53,10 +55,17 @@ export default function ProductCard({ product }) {
         {extraDetails?.description || 'No description available.'}
       </p>
 
-      {/* Sold by */}
-      <p className="product-supplier">
-        <strong>Sold by:</strong> {[...(suppliers || [])].join(', ') || 'WarehouseMart'}
-      </p>
+      {/* Sold by & Ships from */}
+      <div className="product-meta-lines">
+        <p className="product-supplier">
+          <strong>Sold by:</strong> {[...(suppliers || [])].join(', ') || 'Cloudtail India Ltd'}
+        </p>
+        {warehouses && warehouses.length > 0 && (
+          <p className="product-warehouses">
+            <strong>📍 Ships from:</strong> {[...(warehouses || [])].map(getWarehouseLabel).join(', ')}
+          </p>
+        )}
+      </div>
 
       {/* Specs preview */}
       {extraDetails?.specifications && typeof extraDetails.specifications === 'object' && Object.keys(extraDetails.specifications).length > 0 && (
@@ -74,7 +83,7 @@ export default function ProductCard({ product }) {
       <div className="product-footer">
         <div className="price-block">
           <span className="price-label">Price</span>
-          <span className="price">${sellingPrice?.toFixed(2)}</span>
+          <span className="price">{formatINR(sellingPrice)}</span>
         </div>
         <div className={`stock-indicator ${inStock ? 'in-stock' : 'out-of-stock'}`}>
           <span className="stock-dot"></span>

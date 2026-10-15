@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
+import { formatINR } from '../utils/formatters'
 
 export default function CartDrawer({ isOpen, onClose, products }) {
   const { cart, totalItems, removeItem, addItem, checkout } = useCart()
@@ -52,7 +53,7 @@ export default function CartDrawer({ isOpen, onClose, products }) {
                   <div className="cart-item-info">
                     <span className="cart-item-name">{product?.prodName || prodId}</span>
                     <span className="cart-item-price">
-                      ${((product?.sellingPrice || 0) * qty).toFixed(2)}
+                      {formatINR((product?.sellingPrice || 0) * qty)}
                     </span>
                   </div>
                   <div className="cart-item-controls">
@@ -71,7 +72,7 @@ export default function CartDrawer({ isOpen, onClose, products }) {
             <div className="cart-summary">
               <div className="cart-subtotal">
                 <span>Subtotal ({totalItems} items)</span>
-                <strong>${subtotal.toFixed(2)}</strong>
+                <strong>{formatINR(subtotal)}</strong>
               </div>
 
               {checkoutState === 'success' && (

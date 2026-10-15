@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '../context/AuthContext'
+import { formatINR, getWarehouseLabel } from '../utils/formatters'
 import {
   fetchSuppliers,
   fetchWarehouses,
@@ -157,8 +158,8 @@ export default function AdminPanel() {
             <div className="form-group"><label>Stock Qty *</label>
               <input className="form-input" type="number" min="0" value={form.stockNumber} onChange={f('stockNumber')} required />
             </div>
-            <div className="form-group"><label>Price (USD) *</label>
-              <input className="form-input" type="number" step="0.01" min="0" value={form.sellingPrice} onChange={f('sellingPrice')} required />
+            <div className="form-group"><label>Price (₹ INR) *</label>
+              <input className="form-input" type="number" step="1" min="0" value={form.sellingPrice} onChange={f('sellingPrice')} required />
             </div>
             <div className="form-group"><label>Supplier</label><SupplierSelect /></div>
             <div className="form-group"><label>Brand</label>
@@ -198,8 +199,8 @@ export default function AdminPanel() {
             <div className="form-group"><label>New Stock Qty</label>
               <input className="form-input" type="number" min="0" placeholder="Leave blank to keep" value={form.stockNumber} onChange={f('stockNumber')} />
             </div>
-            <div className="form-group"><label>New Price</label>
-              <input className="form-input" type="number" step="0.01" min="0" placeholder="Leave blank to keep" value={form.sellingPrice} onChange={f('sellingPrice')} />
+            <div className="form-group"><label>New Price (₹ INR)</label>
+              <input className="form-input" type="number" step="1" min="0" placeholder="Leave blank to keep" value={form.sellingPrice} onChange={f('sellingPrice')} />
             </div>
             <div className="form-group"><label>New Supplier</label><SupplierSelect /></div>
             <div className="form-group form-group-wide"><label>New Description</label>
@@ -251,9 +252,9 @@ export default function AdminPanel() {
                   <td><code>{p.prodId}</code></td>
                   <td>{p.prodName}</td>
                   <td>{p.category}</td>
-                  <td>${p.sellingPrice?.toFixed(2)}</td>
+                  <td>{formatINR(p.sellingPrice)}</td>
                   <td className={p.totalStock < 5 ? 'low-stock' : ''}>{p.totalStock}</td>
-                  <td>{[...(p.warehouses || [])].join(', ')}</td>
+                  <td>{[...(p.warehouses || [])].map(getWarehouseLabel).join(', ')}</td>
                 </tr>
               ))}
             </tbody>

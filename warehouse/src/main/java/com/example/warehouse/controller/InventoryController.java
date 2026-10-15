@@ -27,23 +27,44 @@ public class InventoryController {
     private final InventoryRepository inventoryRepo;
     private final ProductDetailsRepository mongoRepo;
     private final com.example.warehouse.config.MongoDataInitializer mongoSeeder;
+    private final com.example.warehouse.config.SqlDataInitializer sqlSeeder;
 
     public InventoryController(InventoryRepository inventoryRepo,
                                ProductDetailsRepository mongoRepo,
-                               com.example.warehouse.config.MongoDataInitializer mongoSeeder) {
+                               com.example.warehouse.config.MongoDataInitializer mongoSeeder,
+                               com.example.warehouse.config.SqlDataInitializer sqlSeeder) {
         this.inventoryRepo = inventoryRepo;
         this.mongoRepo = mongoRepo;
         this.mongoSeeder = mongoSeeder;
+        this.sqlSeeder = sqlSeeder;
     }
 
     /**
      * GET /api/inventory/seed-mongo
-     * One-click trigger to seed MongoDB product details if empty.
+     * One-click trigger to seed MongoDB product details.
      */
     @GetMapping("/seed-mongo")
     public Map<String, Object> seedMongo() {
-        int count = mongoSeeder.seedIfEmpty();
-        return Map.of("status", "SUCCESS", "seededCount", count, "message", "MongoDB seeded with product images and specs.");
+        int count = mongoSeeder.seedCatalog();
+        return Map.of("status", "SUCCESS", "seededCount", count, "message", "MongoDB seeded with 35 Indian products, images, and specifications.");
+    }
+
+    /**
+     * GET /api/inventory/seed-indian-catalog
+     * Triggers complete MySQL and MongoDB refresh for the 35 Indian products.
+     */
+    @GetMapping("/seed-indian-catalog")
+    public Map<String, Object> seedIndianCatalog() {
+        sqlSeeder.migrateCatalog();
+        int mongoCount = mongoSeeder.seedCatalog();
+        return Map.of(
+            "status", "SUCCESS",
+            "message", "Indian catalog successfully migrated across MySQL and MongoDB!",
+            "totalProducts", 35,
+            "warehouses", 6,
+            "suppliers", 6,
+            "mongoSeededCount", mongoCount
+        );
     }
 
     // ─── Catalog ─────────────────────────────────────────────────────────────

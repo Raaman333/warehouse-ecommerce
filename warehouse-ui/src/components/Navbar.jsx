@@ -15,10 +15,19 @@ export default function Navbar({ onSearch, onCategoryChange, categories, activeC
 
   return (
     <header className="navbar">
-      {/* Logo */}
-      <div className="navbar-logo">
-        <span className="logo-icon">🏪</span>
-        <span className="logo-text">WarehouseMart</span>
+      {/* Logo & Delivery Location */}
+      <div className="navbar-brand-group">
+        <div className="navbar-logo">
+          <span className="logo-icon">🏪</span>
+          <span className="logo-text">WarehouseMart</span>
+        </div>
+        <div className="navbar-delivery-badge" title="Delivering across all Indian states">
+          <span className="delivery-pin">📍</span>
+          <div className="delivery-text">
+            <span className="delivery-sub">Deliver to</span>
+            <span className="delivery-main">India 🇮🇳</span>
+          </div>
+        </div>
       </div>
 
       {/* Search */}
