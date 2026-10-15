@@ -23,8 +23,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "http://localhost*",
                         "http://127.0.0.1*",
                         "https://*.azurestaticapps.net",
-                        "https://*.azurewebsites.net",
-                        "*"
+                        "https://*.azurewebsites.net"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
