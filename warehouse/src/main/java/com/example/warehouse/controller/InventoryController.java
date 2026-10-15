@@ -26,11 +26,24 @@ public class InventoryController {
 
     private final InventoryRepository inventoryRepo;
     private final ProductDetailsRepository mongoRepo;
+    private final com.example.warehouse.config.MongoDataInitializer mongoSeeder;
 
     public InventoryController(InventoryRepository inventoryRepo,
-                               ProductDetailsRepository mongoRepo) {
+                               ProductDetailsRepository mongoRepo,
+                               com.example.warehouse.config.MongoDataInitializer mongoSeeder) {
         this.inventoryRepo = inventoryRepo;
         this.mongoRepo = mongoRepo;
+        this.mongoSeeder = mongoSeeder;
+    }
+
+    /**
+     * GET /api/inventory/seed-mongo
+     * One-click trigger to seed MongoDB product details if empty.
+     */
+    @GetMapping("/seed-mongo")
+    public Map<String, Object> seedMongo() {
+        int count = mongoSeeder.seedIfEmpty();
+        return Map.of("status", "SUCCESS", "seededCount", count, "message", "MongoDB seeded with product images and specs.");
     }
 
     // ─── Catalog ─────────────────────────────────────────────────────────────
