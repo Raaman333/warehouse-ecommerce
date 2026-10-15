@@ -20,10 +20,14 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
                 .allowedOriginPatterns(
-                        "http://localhost*",
-                        "http://127.0.0.1*",
+                        "https://icy-field-021774800.5.azurestaticapps.net",
+                        "https://*.5.azurestaticapps.net",
                         "https://*.azurestaticapps.net",
-                        "https://*.azurewebsites.net"
+                        "https://*.*.azurestaticapps.net",
+                        "https://*.azurewebsites.net",
+                        "https://*",
+                        "http://localhost*",
+                        "http://127.0.0.1*"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")

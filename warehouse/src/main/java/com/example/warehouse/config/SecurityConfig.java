@@ -38,8 +38,12 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOriginPatterns(List.of(
+                "https://icy-field-021774800.5.azurestaticapps.net",
+                "https://*.5.azurestaticapps.net",
                 "https://*.azurestaticapps.net",
+                "https://*.*.azurestaticapps.net",
                 "https://*.azurewebsites.net",
+                "https://*",
                 "http://localhost*",
                 "http://127.0.0.1*"
         ));
@@ -73,9 +77,9 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, JwtFilter jwtFilter, DaoAuthenticationProvider authenticationProvider) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, JwtFilter jwtFilter, DaoAuthenticationProvider authenticationProvider, CorsConfigurationSource corsConfigurationSource) throws Exception {
         http
-            .cors(org.springframework.security.config.Customizer.withDefaults())
+            .cors(cors -> cors.configurationSource(corsConfigurationSource))
             .csrf(csrf -> csrf.disable())
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
