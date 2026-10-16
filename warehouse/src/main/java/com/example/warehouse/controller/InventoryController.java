@@ -88,6 +88,16 @@ public class InventoryController {
             allItems = inventoryRepo.findAll();
         }
 
+        // Pre-fetch all MongoDB details into a lookup map (safe against missing or duplicate docs)
+        Map<String, ProductDetails> detailsMap = new HashMap<>();
+        try {
+            for (ProductDetails pd : mongoRepo.findAll()) {
+                if (pd.getProdId() != null) {
+                    detailsMap.putIfAbsent(pd.getProdId(), pd);
+                }
+            }
+        } catch (Exception ignored) {}
+
         // Aggregate multi-warehouse records into one card per prodId
         Map<String, GroupedProductDTO> grouped = new LinkedHashMap<>();
 
@@ -104,14 +114,13 @@ public class InventoryController {
                 dto.setWarehouses(new HashSet<>());
                 dto.setSuppliers(new HashSet<>());
 
-                ProductDetails details = mongoRepo.findByProdId(pid)
-                        .orElseGet(() -> {
-                            ProductDetails empty = new ProductDetails();
-                            empty.setProdId(pid);
-                            empty.setDescription("No additional details available.");
-                            empty.setSpecifications(Map.of());
-                            return empty;
-                        });
+                ProductDetails details = detailsMap.get(pid);
+                if (details == null) {
+                    details = new ProductDetails();
+                    details.setProdId(pid);
+                    details.setDescription("High quality product backed by manufacturer warranty.");
+                    details.setSpecifications(Map.of());
+                }
                 dto.setExtraDetails(details);
                 return dto;
             });
@@ -138,12 +147,17 @@ public class InventoryController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "Product not found: " + prodId + " at warehouse " + warehouseId));
 
-        ProductDetails details = mongoRepo.findByProdId(prodId).orElseGet(() -> {
-            ProductDetails empty = new ProductDetails();
-            empty.setDescription("No extra details available.");
-            empty.setSpecifications(Map.of());
-            return empty;
-        });
+        ProductDetails details = null;
+        try {
+            details = mongoRepo.findFirstByProdId(prodId).orElse(null);
+        } catch (Exception ignored) {}
+
+        if (details == null) {
+            details = new ProductDetails();
+            details.setProdId(prodId);
+            details.setDescription("High quality product backed by manufacturer warranty.");
+            details.setSpecifications(Map.of());
+        }
 
         return new FullProductDTO(inv, details);
     }

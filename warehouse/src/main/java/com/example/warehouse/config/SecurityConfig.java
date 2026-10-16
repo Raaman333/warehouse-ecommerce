@@ -85,6 +85,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // Allow preflight OPTIONS requests from any origin
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                // Error endpoint
+                .requestMatchers("/error").permitAll()
                 // Public read-only catalog
                 .requestMatchers(HttpMethod.GET,  "/api/inventory/**").permitAll()
                 .requestMatchers(HttpMethod.GET,  "/api/warehouses").permitAll()

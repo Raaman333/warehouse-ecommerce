@@ -257,6 +257,7 @@ public class MongoDataInitializer implements CommandLineRunner {
                     List.of("router", "wifi6e", "tp-link", "networking", "tri-band"))
             );
 
+            mongoRepo.deleteAll();
             mongoRepo.saveAll(items);
             log.info("MongoDB successfully seeded with all {} product details!", items.size());
             return items.size();
@@ -269,6 +270,7 @@ public class MongoDataInitializer implements CommandLineRunner {
     private ProductDetails create(String prodId, String brand, String desc, String img,
                                   Map<String, String> specs, List<String> tags) {
         ProductDetails p = new ProductDetails();
+        p.setId(prodId);
         p.setProdId(prodId);
         p.setBrand(brand);
         p.setDescription(desc);

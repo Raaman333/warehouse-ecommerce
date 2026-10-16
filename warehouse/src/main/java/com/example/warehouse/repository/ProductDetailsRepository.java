@@ -12,8 +12,12 @@ import java.util.Optional;
  */
 public interface ProductDetailsRepository extends MongoRepository<ProductDetails, String> {
 
-    /** Primary cross-DB lookup: find by MySQL prodId */
-    Optional<ProductDetails> findByProdId(String prodId);
+    /** Primary cross-DB lookup: find by MySQL prodId (safe against non-unique results) */
+    Optional<ProductDetails> findFirstByProdId(String prodId);
+
+    default Optional<ProductDetails> findByProdId(String prodId) {
+        return findFirstByProdId(prodId);
+    }
 
     /** Tag-based search */
     @Query("{ 'tags': { $in: ?0 } }")
