@@ -274,7 +274,7 @@ public class MongoDataInitializer implements CommandLineRunner {
         p.setProdId(prodId);
         p.setBrand(brand);
         p.setDescription(desc);
-        p.setImageUrl(img);
+        p.setImageUrl("/products/" + prodId + ".jpg");
         p.setSpecifications(specs);
         p.setTags(tags);
         return p;

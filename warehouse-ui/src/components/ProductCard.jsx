@@ -24,17 +24,22 @@ export default function ProductCard({ product }) {
   return (
     <article className="product-card">
       {/* Product image */}
-      {extraDetails?.imageUrl && (
-        <div className="product-img-wrapper">
-          <img
-            src={extraDetails.imageUrl}
-            alt={prodName}
-            className="product-img"
-            loading="lazy"
-            onError={e => { e.target.style.display = 'none' }}
-          />
-        </div>
-      )}
+      <div className="product-img-wrapper">
+        <img
+          src={`/products/${prodId}.jpg`}
+          alt={prodName}
+          className="product-img"
+          loading="lazy"
+          referrerPolicy="no-referrer"
+          onError={e => {
+            if (extraDetails?.imageUrl && e.target.src !== extraDetails.imageUrl) {
+              e.target.src = extraDetails.imageUrl
+            } else {
+              e.target.style.display = 'none'
+            }
+          }}
+        />
+      </div>
 
       {/* Badges */}
       <div className="badge-row">
