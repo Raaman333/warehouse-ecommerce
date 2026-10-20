@@ -87,8 +87,6 @@ flowchart LR
     BE -- "Spring Data MongoDB" --> NOSQL[("MongoDB<br/>product_details")]
     SQL -. "shared key prod_id = prodId" .- NOSQL
 ```
-The cloud deployment diagram is available in [`CloudArchitecture.png`](CloudArchitecture.png).
-
 **Layered backend:** Controller (`InventoryController`, `AuthController`) → Security (`SecurityConfig`, `JwtFilter`, `JwtUtils`) → Repository (`InventoryRepository`, `UserRepository` on MySQL; `ProductDetailsRepository` on MongoDB) → Models / DTOs.
 
 ### REST API
@@ -396,7 +394,7 @@ curl -X POST http://localhost:8080/api/auth/login -H "Content-Type: application/
 ```
 warehouse-ecommerce/
 ├── README.md
-├── ERDiagram.png / UMLDiagram.png / CloudArchitecture.png
+├── ERDiagram.png / UMLDiagram.png
 ├── docker-compose.yml
 ├── .env.example                  # template only; real .env is git-ignored
 ├── database/
