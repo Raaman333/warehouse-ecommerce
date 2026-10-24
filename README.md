@@ -1,4 +1,4 @@
-# WarehouseMart — Multi-Warehouse E-Commerce Platform for Independent Vendors in India
+# WarehouseMart — Multi-Warehouse E-Commerce Platform
 
 **Course:** 23AIE303 – Database Management Systems (Project)
 **Repository:** https://github.com/Raaman333/warehouse-ecommerce
